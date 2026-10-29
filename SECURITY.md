@@ -6,8 +6,8 @@
 ---
 
 ## 1. Sanitización de Strings y Anti-Exploit
-- Todo texto recibido del servidor o ingresado por usuarios pasa por un filtro de eliminación de secuencias de escape no autorizadas (`|c`, `|r`, `|H`, `|h`, `|T`).
-- Las cajas de texto de entrada están blindadas contra desbordamiento de búfer y secuencias nulas (`\0`).
+- Todo texto recibido del servidor o procesado por el filtro de chat se valida para impedir la inyección de secuencias de escape no autorizadas que puedan alterar la consola o ejecutar macros maliciosas.
+- Las etiquetas de hipervínculo `|Hpolyglot:<id>|h` están estrictamente delimitadas por IDs numéricos enteros para prevenir inyecciones de código en `SetItemRef`.
 
 ## 2. Aislamiento de Memoria
-- El búfer circular `pendingOriginals` implementa auto-limpieza periódica mediante `table.remove` para prevenir fugas de memoria en sesiones largas (>24 horas).\n
+- El búfer circular `messageCache` implementa auto-reciclaje acotado a 200 entradas para prevenir fugas de memoria en sesiones prolongadas (>24 horas continuas).

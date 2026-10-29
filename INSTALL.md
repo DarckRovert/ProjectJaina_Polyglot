@@ -1,6 +1,11 @@
 # 📦 Guía de Instalación — ProjectJaina_Polyglot
 
-1. Clona o extrae la carpeta en `World of Warcraft\Interface\AddOns\ProjectJaina_Polyglot`.
-2. Confirma que contenga `ProjectJaina_Polyglot.toc` y `ProjectJaina_Polyglot.lua`.
-3. Activa "Cargar accesorios desactualizados" en el menú de AddOns del cliente.
-4. Escribe `/polyglot` dentro del juego para verificar su activación.\n
+1. Extrae o clona la carpeta `ProjectJaina_Polyglot` directamente en:
+   ```text
+   World of Warcraft\Interface\AddOns\ProjectJaina_Polyglot
+   ```
+2. Asegúrate de que contenga los archivos fundamentales:
+   - `ProjectJaina_Polyglot.toc`
+   - `ProjectJaina_Polyglot.lua`
+3. Ingresa al juego. Observarás un discreto icono de portal en la esquina superior derecha del marco de chat principal (`ChatFrame1`).
+4. Haz clic en el icono o escribe `/polyglot toggle` para verificar el estado de la traducción automática.
