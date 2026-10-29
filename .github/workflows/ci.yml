@@ -1,4 +1,4 @@
-name: ProjectJaina_Polyglot — CI/CD
+name: ProjectJaina_Polyglot - CI/CD
 
 on:
   push:
