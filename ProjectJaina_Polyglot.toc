@@ -1,4 +1,5 @@
 ## Interface: 30300
+## Version: 1.0.0
 ## Title: |cff00ccffProject Jaina|r |cffffffffPolyglot|r (Traductor Universal)
 ## Notes: Traduccion bidireccional en tiempo real del chat de World of Warcraft 3.3.5a sin barreras idiomaticas.
 ## Author: DarckRovert & Antigravity (Claude Mythos 5)
