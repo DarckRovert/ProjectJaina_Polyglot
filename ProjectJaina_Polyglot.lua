@@ -138,11 +138,25 @@ frame:SetScript("OnEvent", function(self, event, prefix, msg, channel, sender)
         end
         print("|cff00ccff[Project Jaina Polyglot]|r v1.0.0 cargado. Usa |cffffff00/polyglot|r o |cffffff00.translate|r.")
     elseif event == "CHAT_MSG_ADDON" and prefix == PREFIX then
-        -- Guardar metadatos extendidos recibidos del servidor
+        -- Guardar metadatos extendidos recibidos del servidor con correlacion anti-carrera
         local kind, src, tgt, original = strsplit("\t", msg)
-        if kind and original then
-            if messageCache[cacheCounter] then
-                messageCache[cacheCounter].original = original
+        if kind and original and sender then
+            local baseSender = sender:match("^[^-]+") or sender
+            -- 1. Si el chat ya arribo: buscar hacia atras en la cache reciente el mensaje pendiente de este autor
+            local matched = false
+            for i = 0, 15 do
+                local idx = ((cacheCounter - 1 - i) % CACHE_LIMIT) + 1
+                local entry = messageCache[idx]
+                if entry and (entry.author == sender or entry.author == baseSender) and not entry.original then
+                    entry.original = original
+                    matched = true
+                    break
+                end
+            end
+            -- 2. Si el chat aun no entra al filtro: almacenar en el buffer para consumo atomico inmediato
+            if not matched then
+                pendingOriginals[baseSender] = original
+                pendingOriginals[sender] = original
             end
         end
     end
