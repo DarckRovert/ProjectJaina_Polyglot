@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/DarckRovert/ProjectJaina_Web/main/images/project_jaina_official_logo.jpg" alt="Project JAIna Official Crest" width="180">
+</p>
+
 # 🌐 ProjectJaina_Polyglot — Traductor Universal de Chat en Vivo
 ## Eliminación Completa de Barreras Idiomáticas para World of Warcraft 3.3.5a
 
@@ -66,4 +70,5 @@
 
 ## 🛡️ 4. Licencia y Cumplimiento
 
-Distribuido bajo la Licencia **MIT**. Cumple al 100% con la **Blizzard Custom UI Policy (2009)**. No lee ni modifica memoria del proceso ejecutable (`Wow.exe`).
+Distribuido bajo la Licencia **MIT**. Cumple al 100% con la **Blizzard Custom UI Policy (2009)**. No lee ni modifica memoria del proceso ejecutable (`Wow.exe`).
+
