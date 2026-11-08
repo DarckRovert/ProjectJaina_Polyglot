@@ -76,21 +76,32 @@ local function PolyglotChatFilter(self, event, msg, author, ...)
         return false, msg, author, ...
     end
 
-    -- Detectar etiquetas de traducción enviadas por el servidor: [SRC->TGT]
-    local srcTag, tgtTag, content = msg:match("|cff00ccff%[([%a%-]+)%->([%a%-]+)%]|r%s*(.*)")
+    -- Detectar etiquetas enviadas por el servidor:
+    -- Formato 1 (Con autor): |cff00ccff[Elnazzareno (ES->EN)]:|r texto
+    -- Formato 2 (Canónico directo): |cff00ccff[ES->EN]|r texto
+    local tagAuthor, srcTag, tgtTag, content = msg:match("|cff00ccff%[(.-)%s*%(([%a%-]+)%->([%a%-]+)%)%]:|r%s*(.*)")
+    if not srcTag then
+        srcTag, tgtTag, content = msg:match("|cff00ccff%[([%a%-]+)%->([%a%-]+)%]|r%s*(.*)")
+    end
+
     if srcTag and tgtTag and content then
         cacheCounter = (cacheCounter % CACHE_LIMIT) + 1
+        local effectiveAuthor = (tagAuthor and tagAuthor ~= "") and tagAuthor or (author and author ~= "" and author or "Aventurero")
+
         messageCache[cacheCounter] = {
             src = srcTag,
             tgt = tgtTag,
             text = content,
-            author = author,
+            author = effectiveAuthor,
             time = date("%H:%M:%S")
         }
 
         -- Consumo atómico de texto original si arribó antes por CHAT_MSG_ADDON
-        local origText = author and pendingOriginals[author]
-        if origText then pendingOriginals[author] = nil end
+        local origText = (tagAuthor and pendingOriginals[tagAuthor]) or (author and pendingOriginals[author])
+        if origText then
+            if tagAuthor then pendingOriginals[tagAuthor] = nil end
+            if author then pendingOriginals[author] = nil end
+        end
         messageCache[cacheCounter].original = origText
 
         local formattedTag = ""
@@ -99,7 +110,12 @@ local function PolyglotChatFilter(self, event, msg, author, ...)
             formattedTag = string.format("|cff00ccff|Hpolyglot:%d|h[%s->%s]|h|r ", cacheCounter, srcTag, tgtTag)
         end
 
-        local finalMsg = formattedTag .. content
+        local finalMsg
+        if tagAuthor and tagAuthor ~= "" then
+            finalMsg = string.format("|cffffffff[%s]|r %s%s", tagAuthor, formattedTag, content)
+        else
+            finalMsg = formattedTag .. content
+        end
         return false, finalMsg, author, ...
     end
 
@@ -108,6 +124,7 @@ end
 
 -- Registrar filtros de eventos en los marcos de chat
 local chatEvents = {
+    "CHAT_MSG_SYSTEM",
     "CHAT_MSG_SAY",
     "CHAT_MSG_YELL",
     "CHAT_MSG_WHISPER",
@@ -195,10 +212,13 @@ local function CreateChatToggleButton()
     end)
 end
 
--- Intentar crear el botón tras cargar la interfaz
+-- Intentar crear el botón tras cargar la interfaz y registrar prefijo de red
 local initFrame = CreateFrame("Frame")
 initFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 initFrame:SetScript("OnEvent", function()
+    if RegisterAddonMessagePrefix then
+        RegisterAddonMessagePrefix(PREFIX)
+    end
     CreateChatToggleButton()
     initFrame:UnregisterAllEvents()
 end)
