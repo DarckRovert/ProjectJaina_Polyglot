@@ -13,3 +13,6 @@ Thumbs.db
 # Archivos de empaquetado y releases
 *.zip
 *.tar.gz\n
+# Python bytecode
+__pycache__/
+*.py[cod]
