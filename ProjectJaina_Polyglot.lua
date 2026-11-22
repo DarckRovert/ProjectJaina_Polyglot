@@ -150,8 +150,24 @@ frame:RegisterEvent("CHAT_MSG_ADDON")
 
 frame:SetScript("OnEvent", function(self, event, prefix, msg, channel, sender)
     if event == "ADDON_LOADED" and prefix == ADDON_NAME then
-        if not ProjectJaina_PolyglotDB then
-            ProjectJaina_PolyglotDB = defaults
+        ProjectJaina_PolyglotDB = ProjectJaina_PolyglotDB or {}
+        for k, v in pairs(defaults) do
+            if ProjectJaina_PolyglotDB[k] == nil then
+                if type(v) == "table" then
+                    ProjectJaina_PolyglotDB[k] = {}
+                    for ck, cv in pairs(v) do
+                        ProjectJaina_PolyglotDB[k][ck] = cv
+                    end
+                else
+                    ProjectJaina_PolyglotDB[k] = v
+                end
+            elseif type(v) == "table" and type(ProjectJaina_PolyglotDB[k]) == "table" then
+                for ck, cv in pairs(v) do
+                    if ProjectJaina_PolyglotDB[k][ck] == nil then
+                        ProjectJaina_PolyglotDB[k][ck] = cv
+                    end
+                end
+            end
         end
         print("|cff00ccff[Project Jaina Polyglot]|r v1.0.0 cargado. Usa |cffffff00/polyglot|r o |cffffff00.translate|r.")
     elseif event == "CHAT_MSG_ADDON" and prefix == PREFIX then
@@ -197,7 +213,7 @@ local function CreateChatToggleButton()
         GameTooltip:AddLine("|cff00ccffProject Jaina Polyglot|r", 1, 1, 1)
         local status = ProjectJaina_PolyglotDB.enabled and "|cff00ff00Activado|r" or "|cffff0000Desactivado|r"
         GameTooltip:AddLine("Traductor Universal: " .. status, 0.8, 0.8, 0.8)
-        GameTooltip:AddLine("Clic: Alternar /polyglot menu", 1, 1, 0)
+        GameTooltip:AddLine("Clic: Activar/Desactivar traducción | /polyglot help", 1, 1, 0)
         GameTooltip:Show()
     end)
 
@@ -229,19 +245,34 @@ end)
 SLASH_POLYGLOT1 = "/polyglot"
 SLASH_POLYGLOT2 = "/pjtr"
 SlashCmdList["POLYGLOT"] = function(msg)
-    local cmd, arg = msg:match("^(%S+)%s*(.*)$")
+    local cmd, arg = (msg or ""):match("^(%S+)%s*(.*)$")
     cmd = cmd and cmd:lower() or "toggle"
 
     if cmd == "toggle" then
         ProjectJaina_PolyglotDB.enabled = not ProjectJaina_PolyglotDB.enabled
         local state = ProjectJaina_PolyglotDB.enabled and "|cff00ff00ACTIVADA|r" or "|cffff0000DESACTIVADA|r"
         print("|cff00ccff[Project Jaina Polyglot]|r Traducción " .. state .. ".")
+    elseif cmd == "on" then
+        ProjectJaina_PolyglotDB.enabled = true
+        print("|cff00ccff[Project Jaina Polyglot]|r Traducción |cff00ff00ACTIVADA|r.")
+    elseif cmd == "off" then
+        ProjectJaina_PolyglotDB.enabled = false
+        print("|cff00ccff[Project Jaina Polyglot]|r Traducción |cffff0000DESACTIVADA|r.")
     elseif cmd == "tags" then
         ProjectJaina_PolyglotDB.showTags = not ProjectJaina_PolyglotDB.showTags
         local state = ProjectJaina_PolyglotDB.showTags and "|cff00ff00visibles|r" or "|cffff0000ocultas|r"
         print("|cff00ccff[Project Jaina Polyglot]|r Etiquetas [SRC->TGT] " .. state .. ".")
+    elseif cmd == "status" or cmd == "help" or cmd == "menu" then
+        local state = ProjectJaina_PolyglotDB.enabled and "|cff00ff00ACTIVADA|r" or "|cffff0000DESACTIVADA|r"
+        local tags = ProjectJaina_PolyglotDB.showTags and "|cff00ff00visibles|r" or "|cffff0000ocultas|r"
+        print("|cff00ccff=== Project Jaina Polyglot ===|r")
+        print("  Estado: " .. state .. " | Etiquetas [SRC->TGT]: " .. tags)
+        print("  |cffffff00/polyglot toggle|r (on/off) - Activa o desactiva la traducción visual.")
+        print("  |cffffff00/polyglot tags|r - Muestra u oculta las etiquetas [SRC->TGT].")
+        print("  |cffffff00.translate <on|off|lang|status>|r - Control del servidor.")
     else
         print("|cff00ccff=== Project Jaina Polyglot ===|r")
+        print("  |cffffff00/polyglot status|r - Muestra el estado actual y opciones.")
         print("  |cffffff00/polyglot toggle|r - Activa o desactiva la traducción visual.")
         print("  |cffffff00/polyglot tags|r - Muestra u oculta las etiquetas [SRC->TGT].")
         print("  |cffffff00.translate <on|off|lang|status>|r - Control del servidor.")

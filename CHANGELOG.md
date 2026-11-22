@@ -4,6 +4,15 @@ Todos los cambios notables de este proyecto están documentados en este archivo 
 
 ---
 
+## [1.0.1] — 2026-11-22
+### Migración Automática de SavedVariables y Subcomandos Slash Completos (Hito #386)
+- **Migración Defensiva en `ADDON_LOADED` (`ProjectJaina_Polyglot.lua`):**
+  - Propagadas claves faltantes desde `defaults` sobre perfiles heredados en `ProjectJaina_PolyglotDB` para evitar lecturas `nil`.
+- **Consola Slash (`/polyglot`):**
+  - Incorporado soporte completo y documentado para `on`, `off`, `status`, `help` y `menu`.
+
+---
+
 ## [1.0.0] — 2026-10-28
 ### Lanzamiento Oficial v1.0.0 — Traductor Universal de Chat Bidireccional en Vivo
 - **Núcleo de Traducción Neural (`ProjectJaina_Polyglot.lua`):**
